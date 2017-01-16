@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html>
+<title>Wiki-suggestions</title>    
+
+<head> 
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    
+    <script src="https://use.fontawesome.com/c4baa82464.js"></script>        
+    <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+        
+</head>
+    
+<style>
+
+    html, body{
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .margin{
+        margin: 10px;
+    }
+    
+    #flex-container{
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10%;
+        background: blue;
+    }
+    
+    #form-cont{
+        background-color: blanchedalmond;
+    }
+    
+    #proto-box{
+        display: none;
+    }
+    
+    .result-box{
+        position: relative;
+        left: 0;
+        width: 200px;
+        min-width: 200px;
+        height: 50px;
+        border: solid 1px black;
+        background-color: aliceblue;        
+        opacity: 0;
+                        
+        -webkit-transition: all 0.5s ease-out;
+        transition: all 0.5s ease-out;
+    }
+    
+    .left.placed{
+        left: -50px;
+    }
+    
+    .right.placed{
+        left: 50px;
+    }
+
+    @media all and (max-width:768px), all and (max-height:350px)
+    {
+        .right.placed, .left.placed{left: 0;}
+        #form-cont{order: -1};       
+    }
+    
+</style>    
+    
+<body>
+    
+    <div id="flex-container">
+                
+        <form id="form-cont" class="margin">
+            <input id="search-bar" type="text" placeholder="enter your search keyword" />
+            <button id="search-btn" type="button">search</button>
+        </form>
+        
+        <div id="proto-box" class="result-box margin"></div>
+        
+    </div>
+    
+    <script>
+        
+    $(document).ready(function(){
+        
+        var maxResults = 5;
+        var resultHeaders;
+        var resultLinks;
+        var holdNewSearches = false;
+        
+        $("#search-btn").on("click", function(){
+            if(!holdNewSearches)
+            {
+                foldPreviousSearch();
+                holdNewSearches = true;
+            }
+        });
+        
+        function foldPreviousSearch()
+        {
+            console.log("before rem: " + $(".result-box:not(#proto-box)").length);
+
+            var fadeDelay = 500;
+            $(".result-box:not(#proto-box)").removeClass("placed").fadeOut(fadeDelay, function(){
+                $(this).remove();
+                //console.log($(".result-box").length);
+            });
+
+            setTimeout(function(){
+                console.log("before perf: " + $(".result-box:not(#proto-box)").length);
+                performSearch($("#search-bar").val());                    
+            }, fadeDelay * 2);
+        }
+            
+        function performSearch(search){            
+
+            $.ajax({
+                type: "GET",
+                url: "http://en.wikipedia.org/w/api.php?action=opensearch&format=json&limit="+maxResults+"&search="+search+"&callback=?",
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    resultHeaders = data[1].slice();
+                    resultLinks = data[3].slice();
+                    console.log(data[1]);
+                    console.log("before gen: " + $(".result-box:not(#proto-box)").length);
+                    generateResults();
+                },
+                error: function (errorMessage) {
+                }
+            });
+        }
+        
+        function generateResults()
+        {               
+            for(var i=0; i < resultHeaders.length; i++)
+            {
+                var $cloneBox = $("#proto-box").clone(true);
+                var position = i % 2 == 0 ? "left" : "right";
+
+                $cloneBox.removeAttr("id");
+                $cloneBox.css("order", i);
+                $cloneBox.text(resultHeaders[i]);
+                $cloneBox.addClass(position);
+                $("#flex-container").append($cloneBox);
+            }
+                       
+            $(".result-box:not(#proto-box)").each(function(idx){
+                $(this).delay(idx * 300).animate({opacity:1}, 100, function(){
+                    if(idx >= $(".result-box:not(#proto-box)").length - 1)
+                    {
+                        $(".result-box:not(#proto-box)").addClass("placed");
+                        holdNewSearches = false;
+                    }
+                });
+            });
+        }
+        
+    });
+
+    </script>   
+    
+</body>
+    
+</html>
