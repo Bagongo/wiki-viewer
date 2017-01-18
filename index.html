@@ -22,12 +22,6 @@
         height: 100%;
         margin: 0;
         padding: 0;
-        
-        background-color: #f8f8f8;
-        background: -webkit-linear-gradient(#f8f8f8, #f5f5f5); 
-        background: -o-linear-gradient(#f8f8f8, #f5f5f5);
-        background: -moz-linear-gradient(#f8f8f8, #f5f5f5);
-        background: linear-gradient(#f8f8f8, #f5f5f5);
     }
     
     .margin{
@@ -48,49 +42,71 @@
         background-color: blanchedalmond;
     }
     
+    #big-folder{
+        position: fixed;
+        z-index: 2;
+        height: 100%;
+        width: 50%;
+        left: 50%;
+        background-color: rgba(245, 245, 220, 0.2);
+    }
+    
     #proto-box{
         display: none;
     }
     
     .result-box{
         position: relative;
-        left: 0;
-        width: 200px;
-        min-width: 200px;
-        height: auto;
-        max-height: 250px;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        align-items: center;
+        left: 250px;
+        width: 250px;
+        height: 250px;
+        min-width: 250px;
+        min-height: 250px;  
         overflow: scroll;
         border-radius: 10px;
         border: solid 1px #dae3ef;
-        padding: 5%;
-        opacity: 0;
-                        
-        -webkit-transition: all 0.5s ease-out;
-        transition: all 0.5s ease-out;
+        
+        -webkit-transition: all 1s ease; /* Safari */
+        transition: all 1s ease;
     }
     
-    .result-box > div:nth-child(1){
-        width: 100%;
+    .result-box.pop-left{
+        animation: leftpop 1s ease-out;
+        animation-fill-mode: forwards;
+    }
+ 
+    @keyframes leftpop{
+        0%{left:250px;}
+        50%{left: -50px;}
+        100%{left: 30px;}
+    }
+    
+    .result-box h4{
+        position: absolute;
+        width: 105%;
+        height: 50px;
         background-color: #dae3ef;
+        top: 30%;
+        left: calc(-50% + 25px);
+        padding: 10px;
+        margin-left: -5%;
         text-align: center;
-    }
-
-    .left.placed{
-        left: -50px;
+        
+        -webkit-transform:rotate(-90deg);
+        -moz-transform:rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        -ms-transform:rotate(-90deg);
+        transform: rotate(-90deg);
     }
     
-    .right.placed{
-        left: 50px;
+   .result-box:hover{
+        margin-left: -150px; 
     }
+    
 
     @media all and (max-width:768px), all and (max-height:350px)
     {
-        .right.placed, .left.placed{left: 0;}
-        #form-cont{order: -1};       
+             
     }
     
 </style>    
@@ -98,17 +114,17 @@
 <body>
     
     <div id="flex-container">
-                
-        <form id="form-cont" class="margin">
+        
+        <div id="big-folder">
+            <form id="form-cont" class="margin">
             <input id="search-bar" type="text" placeholder="enter your search keyword" />
         </form>
+        </div>
         
         <div id="proto-box" class="result-box margin">
             <div>
-                <h4></h4>
-            </div>
-            <div>
                 <p></p>
+                <h4></h4>
             </div>
         </div>
         
@@ -130,25 +146,20 @@
             
             if(!holdNewSearches)
             {
-                foldPreviousSearch();
                 holdNewSearches = true;
+                foldPreviousSearch();
             }
         });
         
         function foldPreviousSearch()
         {
-            console.log("before rem: " + $(".result-box:not(#proto-box)").length);
-
-            var fadeDelay = 500;
-            $(".result-box:not(#proto-box)").removeClass("placed").fadeOut(fadeDelay, function(){
-                $(this).remove();
-                //console.log($(".result-box").length);
-            });
-
+            console.log($(".result-box:not(#proto-box)").length);
+            
+            $(".result-box:not(#proto-box)").fadeOut();
+            
             setTimeout(function(){
-                console.log("before perf: " + $(".result-box:not(#proto-box)").length);
                 performSearch($("#search-bar").val());                    
-            }, fadeDelay * 2);
+            }, 2000);
         }
             
         function performSearch(search){            
@@ -163,7 +174,6 @@
                     resultHeaders = data[1].slice();
                     resultDescr = data[2].slice();
                     resultLinks = data[3].slice();
-                    console.log("before gen: " + $(".result-box:not(#proto-box)").length);
                     generateResults();
                 },
                 error: function (errorMessage) {
@@ -176,21 +186,19 @@
             for(var i=0; i < resultHeaders.length; i++)
             {
                 var $cloneBox = $("#proto-box").clone(true);
-                var position = i % 2 == 0 ? "left" : "right";
 
                 $cloneBox.removeAttr("id");
                 $cloneBox.css("order", i);
                 $cloneBox.find("h4").text(resultHeaders[i]);
                 $cloneBox.find("p").text(resultDescr[i]);
-                $cloneBox.addClass(position);
                 $("#flex-container").append($cloneBox);
             }
-                       
+                        
             $(".result-box:not(#proto-box)").each(function(idx){
-                $(this).delay(idx * 300).animate({opacity:1}, 100, function(){
+                $(this).delay(idx * 300).queue(function(){
+                    $(this).addClass("pop-left");
                     if(idx >= $(".result-box:not(#proto-box)").length - 1)
                     {
-                        $(".result-box:not(#proto-box)").addClass("placed");
                         holdNewSearches = false;
                     }
                 });
