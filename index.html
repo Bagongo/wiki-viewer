@@ -25,6 +25,18 @@
         background-color: #e5e5e5;
     }
     
+    a{
+        color: #1755a8;
+    }
+
+    a:active{
+        color: #b73a31;
+    }
+    
+    a:visited{
+        color: #962e96;
+    }
+    
     .margin{
         margin: 10px;
     }
@@ -44,14 +56,20 @@
         height: 100%;
         width: 50%;
         left: 50%;
-        background-color: rgb(255, 255, 220);
-        
+        background-color: rgb(255, 255, 220);        
         box-shadow: -3px 0 2px #807f7f;
+    }
+    
+    h1{
+        margin: 2% 0 0 5%;
+        padding: 0;
+        color: #bcaf9c;
+        font-size: 2.5em;
     }
     
     #form-cont{
         position: relative;
-        top: 5%;
+        top: 2%;
         border-top: 2px solid #f7e3c6;
         border-bottom: 2px solid #f7e3c6;
         padding: 2%;
@@ -153,6 +171,8 @@
 
     @media all and (max-width:768px), all and (max-height:350px)
     {
+        h1{font-size: 1.5em;}
+        
         #form-cont > input{
             width: 75%;
             height: 35px;
@@ -168,6 +188,7 @@
     <div id="flex-container">
         
         <div id="big-folder">
+            <h1>Wiki Dossiers</h1>
             <form id="form-cont">
                 <input id="search-bar"  type="text" placeholder="&#xF002;"/>
             </form>
@@ -176,9 +197,8 @@
         
         <div id="proto-box" class="result-box margin">
             <div>
-                <p></p>
-                <h4></h4>
-                <a href="" target="_blank"></a>
+                <p></p>            
+                <a href="" target="_blank"><h4></h4></a>
             </div>
         </div>
         
@@ -194,11 +214,8 @@
         var resultLinks;
         var holdNewSearches = false;
         
-        $("form").on("submit", function(e){
-            
+        $("form").on("submit", function(e){            
             e.preventDefault();
-            
-            //console.log($("#search-bar").val());
             
             if(!holdNewSearches)
             {
@@ -212,10 +229,10 @@
             var $boxes = $(".result-box:not(#proto-box)");
             console.log($boxes.length);
 
-            
             if($boxes.length > 0)
             { 
-                $boxes.each(function(idx){
+                $boxes.each(function(idx)
+                {
                     $(this).remove();
                 });
                 
