@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html>
-<title>Wiki-suggestions</title>    
+<title>Wiki-Dossiers</title>    
 
 <head> 
 
@@ -226,18 +226,18 @@
         
         function foldPreviousSearch()
         {
-            var $boxes = $(".result-box:not(#proto-box)");
-            console.log($boxes.length);
+            $boxes = $(".result-box:not(#proto-box)");
+            var timing = 500;
 
             if($boxes.length > 0)
             { 
-                $boxes.each(function(idx)
-                {
+                $boxes.animate({marginLeft:"150px"}, timing, function(){
                     $(this).remove();
                 });
                 
-                console.log($(".result-box:not(#proto-box)").length);                
-                performSearch($("#search-bar").val());                    
+                setTimeout(function(){
+                    performSearch($("#search-bar").val());                    
+                }, timing * 2);                    
             }
             else
                 performSearch($("#search-bar").val());                    
@@ -252,9 +252,7 @@
                 async: false,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
-                    
-                    console.log(data);
-                    
+                                        
                     if(data.hasOwnProperty("error"))
                         handleError();
                     else
@@ -262,7 +260,6 @@
                         resultHeaders = data[1].slice();
                         resultDescr = data[2].slice();
                         resultLinks = data[3].slice();
-
                         generateResults();
                     }
                 },
@@ -292,15 +289,8 @@
                 $("#flex-container").append($cloneBox);
             }
                         
-            $(".result-box:not(#proto-box)").each(function(idx){
-                $(this).delay(idx * 300).queue(function(){
-                    $(this).addClass("pop-left");
-                    if(idx >= $(".result-box:not(#proto-box)").length - 1)
-                    {
-                        holdNewSearches = false;
-                    }
-                });
-            });
+            $(".result-box:not(#proto-box)").addClass("pop-left");
+            holdNewSearches = false;
         }
         
         performSearch("wikipedia");
@@ -309,6 +299,6 @@
 
     </script>   
     
-</body>
+</body>  
     
 </html>
