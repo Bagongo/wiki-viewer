@@ -26,6 +26,7 @@
     }
     
     a{
+        outline: none;
         color: #1755a8;
     }
 
@@ -63,12 +64,16 @@
     h1{
         margin: 2% 0 0 5%;
         padding: 0;
-        color: #bcaf9c;
+        color: #b9ab97;
         font-size: 2.5em;
     }
     
     #form-cont{
         position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
         top: 2%;
         border-top: 2px solid #f7e3c6;
         border-bottom: 2px solid #f7e3c6;
@@ -79,7 +84,7 @@
     #form-cont > input{
         width: 200px;
         height: 50px;
-        margin-left: 15px;
+        margin: 5px 0 5px 15px;
         padding: 8px;
         border-radius: 10px;
         color: #383838;
@@ -88,6 +93,17 @@
         border: 4px solid #f7e3c6;
     }
     
+    #random-result{
+        margin: 5px 0 5px 15px;
+        color: #e5d4bc;
+    }
+    
+    #random-result:hover{
+        color: #b9ab97;
+    }
+
+    
+        
     #form-cont > input:focus{
         outline: none;        
     }
@@ -173,6 +189,8 @@
     {
         h1{font-size: 1.5em;}
         
+        #form-cont{justify-content: center;}
+        
         #form-cont > input{
             width: 75%;
             height: 35px;
@@ -191,6 +209,7 @@
             <h1>Wiki Dossiers</h1>
             <form id="form-cont">
                 <input id="search-bar"  type="text" placeholder="&#xF002;"/>
+                <a id="random-result" href="https://en.wikipedia.org/wiki/Special:Random" target="_blank"><i class="fa fa-random fa-2x"></i></a>
             </form>
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/842px-Wikipedia-logo-v2.svg.png"/>
         </div>
